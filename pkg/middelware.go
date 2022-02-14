@@ -2,13 +2,19 @@ package pkg
 
 import "net/url"
 
-func ParceURL(argument []string) (string, error) {
-	url, err := url.Parse(argument[1])
-	if err != nil {
-		return "", err
+func ParceURL(argument []string) (map[string]string, error) {
+	response := make(map[string]string)
+
+	for _, value := range argument {
+		url, err := url.Parse(value)
+		if err != nil {
+			return nil, err
+		}
+		q := url.Query()
+		id := q["v"]
+
+		response[id[0]] = "https://img.youtube.com/vi/" + id[0] + "/0.jpg"
 	}
 
-	q := url.Query()
-	id := q["v"]
-	return "https://img.youtube.com/vi/" + id[0] + "/0.jpg", nil
+	return response, nil
 }
