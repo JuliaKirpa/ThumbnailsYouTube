@@ -1,9 +1,9 @@
 package main
 
 import (
-	"ThumbnailsYouTube_/internal"
-	"ThumbnailsYouTube_/pkg"
+	"ThumbnailsYouTube_/PROXY/pkg"
 	"flag"
+	_ "github.com/mattn/go-sqlite3"
 	"os"
 )
 
