@@ -1,11 +1,16 @@
 package internal
 
 import (
+	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"errors"
 	"io"
 	"net/http"
 	"os"
 )
+
+type Server struct {
+	proto.UnimplementedThumbnailsServer
+}
 
 func Download(fileName string, url string) error {
 	response, err := http.Get(url)
