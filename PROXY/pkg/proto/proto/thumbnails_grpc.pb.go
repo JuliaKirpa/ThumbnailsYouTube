@@ -4,7 +4,7 @@
 // - protoc             v3.19.2
 // source: proto/thumbnails.proto
 
-package lib
+package proto
 
 import (
 	context "context"
