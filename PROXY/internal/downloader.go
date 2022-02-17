@@ -2,37 +2,30 @@ package internal
 
 import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
+	"context"
 	"errors"
-	"io"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"net/http"
-	"os"
 )
 
 type Server struct {
 	proto.UnimplementedThumbnailsServer
 }
 
-func Download(fileName string, url string) error {
-	response, err := http.Get(url)
+func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*proto.Image, error) {
+
+	response, err := http.Get(in.GetValue())
 	if err != nil {
-		return err
+		return nil, err
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
-		return errors.New("Received not OK response code")
+		return nil, errors.New("Received not OK response code")
 	}
+	return &proto.Image{
+		Status: "OK",
+		Id:     01,
+	}, nil
 
-	file, err := os.Create(fileName)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = io.Copy(file, response.Body)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	lis, err := net.Listen("tcp", "50051")
+	lis, err := net.Listen("tcp", "localhost:50051")
 	if err != nil {
 		panic(err)
 	}
-	server := internal.Server{}
+	server := &internal.Server{}
 
 	GRPCServ := grpc.NewServer()
 	proto.RegisterThumbnailsServer(GRPCServ, server)

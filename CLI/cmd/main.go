@@ -5,14 +5,16 @@ import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"context"
 	"flag"
+	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"os"
 	"time"
 )
 
 func main() {
 	cwt, _ := context.WithTimeout(context.Background(), time.Second*5)
-	conn, err := grpc.DialContext(cwt, "50051", grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.DialContext(cwt, "localhost:50051", grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		panic(err)
 	}
@@ -30,12 +32,9 @@ func main() {
 
 	flag.Parse()
 	if *async {
-		for _, value := range url {
-			go client.DownloadAsync(value)
-		}
-		return
+		go client.DownloadAsync(context.Background())
 	}
 	for _, value := range url {
-		client.Download(value)
+		fmt.Println(client.Download(context.Background(), &wrapperspb.StringValue{Value: value}))
 	}
 }
