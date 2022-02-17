@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "./lib";
+package proto;
+
+service Thumbnails{
+  rpc Download (google.protobuf.StringValue) returns (Image) {}
+  rpc DownloadAsync(stream google.protobuf.StringValue) returns (stream Image) {}
+}
+
+message Image {
+  string status = 1;
+  int32 id = 2;
+}
