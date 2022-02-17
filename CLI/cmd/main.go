@@ -1,7 +1,6 @@
 package main
 
 import (
-	"ThumbnailsYouTube_/PROXY/pkg"
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"context"
 	"flag"
@@ -23,18 +22,18 @@ func main() {
 	client := proto.NewThumbnailsClient(conn)
 
 	linc := os.Args
-	async := flag.Bool("async", false, "asynchronous downloading")
-
-	url, err := pkg.ParceURL(linc[1:])
-	if err != nil {
-		panic(err)
+	switch {
+	case len(linc) < 2:
+		fmt.Println("add YouTube URL")
+	case len(linc) > 2:
+		fmt.Println("Use key --async to download more then one url")
 	}
+	async := flag.Bool("async", false, "asynchronous downloading")
 
 	flag.Parse()
 	if *async {
 		go client.DownloadAsync(context.Background())
-	}
-	for _, value := range url {
-		fmt.Println(client.Download(context.Background(), &wrapperspb.StringValue{Value: value}))
+	} else {
+		client.Download(context.Background(), &wrapperspb.StringValue{Value: linc[2]})
 	}
 }
