@@ -32,7 +32,12 @@ func main() {
 
 	flag.Parse()
 	if *async {
-		go client.DownloadAsync(context.Background())
+		go func() {
+			stream, _ := client.DownloadAsync(context.Background())
+			if err := stream.Send(&wrapperspb.StringValue{Value: linc[2]}); err != nil {
+				panic(err)
+			}
+		}()
 	} else {
 		client.Download(context.Background(), &wrapperspb.StringValue{Value: linc[2]})
 	}
