@@ -24,27 +24,40 @@ func ConnectToBase() (*DB, error) {
 	return &db, nil
 }
 
-func (database *DB) SaveToBase(filename, url string) (*proto.Image, error) {
-
+func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, error) {
 	statement, err := database.sql.Prepare("INSERT INTO images (filename, image) VALUES (?, ?)")
 	if err != nil {
 		return nil, err
 	}
 
-	statement.Exec(filename)
+	statement.Exec(filename, image)
 
-	return &image, nil
-}
-
-func (database *DB) CheckBase(string string) (*proto.Image, error) {
-	filename, url, err := ParceURL(string)
+	req, err := database.sql.Query("SELECT id FROM images WHERE filename = " + filename)
 	if err != nil {
 		return nil, err
 	}
 
-	image, err := database.sql.Query("SELECT status, id FROM images")
+	insertedImage := proto.Image{
+		Status: "downloaded",
+		Id:     0,
+	}
+
+	for req.Next() {
+		req.Scan(&insertedImage.Id)
+	}
+
+	return &insertedImage, nil
+}
+
+func (database *DB) CheckBase(url string) (*proto.Image, error) {
+	filename, _, err := ParceURL(url)
 	if err != nil {
-		database.SaveToBase(filename, url)
+		return nil, err
+	}
+
+	image, err := database.sql.Query("SELECT status, id FROM images WHERE filename = " + filename)
+	if err != nil {
+		return nil, err
 	}
 
 	response := proto.Image{}
@@ -52,4 +65,7 @@ func (database *DB) CheckBase(string string) (*proto.Image, error) {
 		image.Scan(&response.Status, &response.Id)
 	}
 	return &response, nil
+}
+func (database *DB) Close() {
+	database.sql.Close()
 }

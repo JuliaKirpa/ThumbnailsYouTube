@@ -13,7 +13,7 @@ type Server struct {
 }
 
 func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*proto.Image, error) {
-
+	
 	response, err := http.Get(in.GetValue())
 	if err != nil {
 		return nil, err

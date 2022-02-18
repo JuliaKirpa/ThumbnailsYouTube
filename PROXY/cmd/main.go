@@ -9,6 +9,16 @@ import (
 )
 
 func main() {
+	go ServerStart()
+
+	db, err := pkg.ConnectToBase()
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+}
+
+func ServerStart() {
 	lis, err := net.Listen("tcp", "localhost:50051")
 	if err != nil {
 		panic(err)
@@ -21,10 +31,4 @@ func main() {
 	if err := GRPCServ.Serve(lis); err != nil {
 		panic(err)
 	}
-
-	db, err := pkg.ConnectToBase()
-	if err != nil {
-		panic(err)
-	}
-	defer db.sql.Close()
 }
