@@ -3,6 +3,7 @@ package pkg
 import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type DB struct {
@@ -10,7 +11,7 @@ type DB struct {
 }
 
 func ConnectToBase() (*DB, error) {
-	newDb, err := sql.Open("sqlite3", "SQLite/images.db")
+	newDb, err := sql.Open("sqlite3", "./images.db")
 	if err != nil {
 		return nil, err
 	}
