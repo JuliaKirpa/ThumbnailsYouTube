@@ -5,13 +5,13 @@ import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"context"
 	"google.golang.org/protobuf/types/known/wrapperspb"
-	"io"
+	"io/ioutil"
 	"net/http"
-	"os"
 )
 
 type Server struct {
 	proto.UnimplementedThumbnailsServer
+	pkg.DB
 }
 
 func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*proto.Image, error) {
@@ -21,21 +21,22 @@ func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*pro
 		return nil, err
 	}
 
-	output, err := os.Create("PROXY/internal/assets/" + filename + ".jpg")
+	image, err := s.CheckBase(filename)
 	if err != nil {
-		return nil, err
+		response, err := http.Get(url)
+		if err != nil {
+			return nil, err
+		}
+
+		defer response.Body.Close()
+
+		img, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		return s.SaveToBase(filename, img)
 	}
 
-	response, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-
-	io.Copy(output, response.Body)
-
-	return &proto.Image{
-		Status: "OK",
-		Id:     01,
-	}, nil
+	return image, nil
 }

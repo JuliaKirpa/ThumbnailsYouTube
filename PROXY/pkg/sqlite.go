@@ -50,11 +50,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 	return &insertedImage, nil
 }
 
-func (database *DB) CheckBase(url string) (*proto.Image, error) {
-	filename, _, err := ParceURL(url)
-	if err != nil {
-		return nil, err
-	}
+func (database *DB) CheckBase(filename string) (*proto.Image, error) {
 
 	image, err := database.sql.Query("SELECT status, id FROM images WHERE filename = " + filename)
 	if err != nil {
@@ -67,6 +63,7 @@ func (database *DB) CheckBase(url string) (*proto.Image, error) {
 	}
 	return &response, nil
 }
+
 func (database *DB) Close() {
 	database.sql.Close()
 }
