@@ -3,6 +3,7 @@ package pkg
 import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"database/sql"
+	"errors"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -33,9 +34,9 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 
 	statement.Exec(filename, image)
 
-	req, err := database.sql.Query("SELECT id FROM images WHERE filename = " + filename)
+	req, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error from saving to db")
 	}
 
 	insertedImage := proto.Image{
@@ -52,14 +53,17 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 
 func (database *DB) CheckBase(filename string) (*proto.Image, error) {
 
-	image, err := database.sql.Query("SELECT status, id FROM images WHERE filename = " + filename)
+	image, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("error from checking db")
 	}
 
-	response := proto.Image{}
+	response := proto.Image{
+		Status: "already downloaded",
+		Id:     0,
+	}
 	for image.Next() {
-		image.Scan(&response.Status, &response.Id)
+		image.Scan(&response.Id)
 	}
 	return &response, nil
 }

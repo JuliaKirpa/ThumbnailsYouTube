@@ -4,24 +4,31 @@ import (
 	"ThumbnailsYouTube_/PROXY/pkg"
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"context"
+	"errors"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
 type Server struct {
 	proto.UnimplementedThumbnailsServer
-	pkg.DB
 }
 
 func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*proto.Image, error) {
 
+	db, err := pkg.ConnectToBase()
+	if err != nil {
+		log.Fatal("error to connecting DB")
+	}
+	defer db.Close()
+
 	filename, url, err := pkg.ParceURL(in.GetValue())
 	if err != nil {
-		return nil, err
+		return nil, errors.New("can't parce URL")
 	}
 
-	image, err := s.CheckBase(filename)
+	image, err := db.CheckBase(filename)
 	if err != nil {
 		response, err := http.Get(url)
 		if err != nil {
@@ -35,7 +42,7 @@ func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*pro
 			return nil, err
 		}
 
-		return s.SaveToBase(filename, img)
+		return db.SaveToBase(filename, img)
 	}
 
 	return image, nil
