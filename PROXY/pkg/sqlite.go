@@ -3,7 +3,7 @@ package pkg
 import (
 	"ThumbnailsYouTube_/PROXY/pkg/proto"
 	"database/sql"
-	"errors"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -16,10 +16,12 @@ func ConnectToBase() (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	statement, err := newDb.Prepare("CREATE TABLE IF NOT EXISTS images (id INTEGER PRIMARY KEY, filename TEXT, image BLOB)")
 	if err != nil {
 		return nil, err
 	}
+
 	statement.Exec()
 	db := DB{sql: newDb}
 
@@ -36,7 +38,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 
 	req, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
-		return nil, errors.New("error from saving to db")
+		return nil, fmt.Errorf("error from saving to db: ", err)
 	}
 
 	insertedImage := proto.Image{
@@ -55,7 +57,7 @@ func (database *DB) CheckBase(filename string) (*proto.Image, error) {
 
 	image, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
-		return nil, errors.New("error from checking db")
+		return nil, fmt.Errorf("error from checking db: ", err)
 	}
 
 	response := proto.Image{
