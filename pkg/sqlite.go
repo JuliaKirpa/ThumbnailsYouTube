@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"ThumbnailsYouTube_/pkg/proto"
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
@@ -11,13 +10,14 @@ type DB struct {
 	sql *sql.DB
 }
 
-func New(db *sql.DB) *DB {
-	return &DB{sql: db}
+type Image struct {
+	Status string
+	Id     int32
 }
 
 type Database interface {
-	SaveToBase(filename string, image []byte) (*proto.Image, error)
-	CheckBase(filename string) (*proto.Image, error)
+	SaveToBase(filename string, image []byte) (Image, error)
+	CheckBase(filename string) (Image, error)
 }
 
 func ConnectToBase() (*DB, error) {
@@ -37,7 +37,7 @@ func ConnectToBase() (*DB, error) {
 	return &db, nil
 }
 
-func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, error) {
+func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 	statement, err := database.sql.Prepare("INSERT INTO images (filename, image) VALUES (?, ?)")
 	if err != nil {
 		return nil, err
@@ -50,7 +50,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 		return nil, fmt.Errorf("error from saving to db: ", err)
 	}
 
-	insertedImage := proto.Image{
+	insertedImage := Image{
 		Status: "downloaded",
 		Id:     0,
 	}
@@ -62,14 +62,14 @@ func (database *DB) SaveToBase(filename string, image []byte) (*proto.Image, err
 	return &insertedImage, nil
 }
 
-func (database *DB) CheckBase(filename string) (*proto.Image, error) {
+func (database *DB) CheckBase(filename string) (*Image, error) {
 
 	image, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
 		return nil, fmt.Errorf("error from checking db: ", err)
 	}
 
-	response := proto.Image{
+	response := Image{
 		Status: "already downloaded",
 		Id:     0,
 	}

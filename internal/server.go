@@ -1,4 +1,4 @@
-package ThumbnailsYouTube_
+package internal
 
 import (
 	"ThumbnailsYouTube_/pkg"
@@ -6,10 +6,13 @@ import (
 )
 
 type Server struct {
-	Database *pkg.Database
+	DB *pkg.DB
 	proto.UnimplementedThumbnailsServer
 }
 
-func New(db *pkg.Database) *Server {
-	return &Server{Database: db}
+func New(db *pkg.DB) *Server {
+	return &Server{
+		DB:                            db,
+		UnimplementedThumbnailsServer: proto.UnimplementedThumbnailsServer{},
+	}
 }
