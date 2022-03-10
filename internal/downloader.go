@@ -1,8 +1,8 @@
 package internal
 
 import (
-	"ThumbnailsYouTube_/PROXY/pkg"
-	"ThumbnailsYouTube_/PROXY/pkg/proto"
+	"ThumbnailsYouTube_/pkg"
+	"ThumbnailsYouTube_/pkg/proto"
 	"context"
 	"errors"
 	"google.golang.org/protobuf/types/known/wrapperspb"

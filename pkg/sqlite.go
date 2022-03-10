@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"ThumbnailsYouTube_/PROXY/pkg/proto"
+	"ThumbnailsYouTube_/pkg/proto"
 	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
@@ -9,6 +9,15 @@ import (
 
 type DB struct {
 	sql *sql.DB
+}
+
+func New(db *sql.DB) *DB {
+	return &DB{sql: db}
+}
+
+type Database interface {
+	SaveToBase(filename string, image []byte) (*proto.Image, error)
+	CheckBase(filename string) (*proto.Image, error)
 }
 
 func ConnectToBase() (*DB, error) {

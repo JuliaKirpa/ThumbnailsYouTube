@@ -1,8 +1,8 @@
 package main
 
 import (
-	"ThumbnailsYouTube_/PROXY/internal"
-	"ThumbnailsYouTube_/PROXY/pkg/proto"
+	"ThumbnailsYouTube_/internal"
+	"ThumbnailsYouTube_/pkg/proto"
 	"google.golang.org/grpc"
 	"net"
 )

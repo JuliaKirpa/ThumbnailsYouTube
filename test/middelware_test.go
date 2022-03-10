@@ -1,7 +1,7 @@
 package test
 
 import (
-	"ThumbnailsYouTube_/PROXY/pkg"
+	"ThumbnailsYouTube_/pkg"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
