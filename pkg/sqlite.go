@@ -82,3 +82,7 @@ func (database *DB) CheckBase(filename string) (*Image, error) {
 func (database *DB) Close() {
 	database.sql.Close()
 }
+
+func (database *DB) Clean(id int32) {
+	database.sql.Exec("DELETE FROM images WHERE id = ?", id)
+}
