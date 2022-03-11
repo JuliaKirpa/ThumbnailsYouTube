@@ -45,7 +45,8 @@ func TestDownload(t *testing.T) {
 
 	r, err := c.Download(ctx, &wrapperspb.StringValue{Value: url})
 	if err != nil {
-		log.Fatalf("Could not add product: %v", err)
+		log.Fatalf("Could not download image: %v", err)
 	}
 	log.Printf("Res %s", r.String())
+
 }
