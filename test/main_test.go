@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 		log.Fatalf("err from preparing db %s", er)
 	}
 
-	proto.RegisterThumbnailsServer(s, &internal.Server{storage, proto.UnimplementedThumbnailsServer{}})
+	proto.RegisterThumbnailsServer(s, &internal.Server{DB: storage})
 
 	reflection.Register(s)
 	go func() {

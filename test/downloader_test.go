@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 	"testing"
 	"time"
@@ -13,7 +14,7 @@ import (
 
 func TestDownload(t *testing.T) {
 
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	require.NoError(t, err)
 	defer conn.Close()
 	c := proto.NewThumbnailsClient(conn)

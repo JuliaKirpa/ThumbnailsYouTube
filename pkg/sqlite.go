@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
@@ -35,7 +36,10 @@ func (database *DB) PrepareBase() error {
 		return err
 	}
 
-	statement.Exec()
+	_, err1 := statement.Exec()
+	if err1 != nil {
+		fmt.Errorf("error from settings value: %s", err1)
+	}
 	return nil
 }
 
@@ -45,7 +49,10 @@ func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 		return nil, fmt.Errorf("error from inserting in db: %s", err)
 	}
 
-	statement.Exec(filename, image)
+	_, err1 := statement.Exec(filename, image)
+	if err1 != nil {
+		fmt.Errorf("error from settings value: %s", err1)
+	}
 
 	req, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
 	if err != nil {
@@ -59,7 +66,10 @@ func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 	}
 
 	for req.Next() {
-		req.Scan(&insertedImage.Id)
+		err := req.Scan(&insertedImage.Id)
+		if err != nil {
+			fmt.Errorf("error from scan: %s", err)
+		}
 	}
 	if insertedImage.Id == -1 {
 		return nil, fmt.Errorf("no rows with searching name %s", err)
@@ -80,7 +90,10 @@ func (database *DB) CheckBase(filename string) (*Image, error) {
 		Id:     -1,
 	}
 	for rows.Next() {
-		rows.Scan(&response.Id)
+		err := rows.Scan(&response.Id)
+		if err != nil {
+			fmt.Errorf("error from scan: %s", err)
+		}
 	}
 	if response.Id == -1 {
 		return nil, fmt.Errorf("no rows with searching name %s", err)
@@ -89,7 +102,10 @@ func (database *DB) CheckBase(filename string) (*Image, error) {
 }
 
 func (database *DB) Clean(id int32) {
-	database.sql.Exec("DELETE FROM images WHERE id = ?", id)
+	_, err := database.sql.Exec("DELETE FROM images WHERE id = ?", id)
+	if err != nil {
+		errors.New("can't delete row")
+	}
 }
 
 func (database *DB) Close() {

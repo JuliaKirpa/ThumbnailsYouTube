@@ -21,7 +21,7 @@ func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*pro
 	if err != nil {
 		response, err := http.Get(url)
 		if err != nil {
-			return nil, err
+			return nil, errors.New("error to get URL")
 		}
 
 		defer response.Body.Close()
