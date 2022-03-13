@@ -34,7 +34,10 @@ func TestSaveToBase(t *testing.T) {
 	require.Equal(t, "downloaded", img.Status)
 
 	defer func() {
-		storage.Clean(img.Id)
+		err := storage.Clean(img.Id)
+		if err != nil {
+			log.Fatalf("err to del from db: %s", err)
+		}
 		storage.Close()
 	}()
 }

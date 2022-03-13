@@ -51,7 +51,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 
 	_, err1 := statement.Exec(filename, image)
 	if err1 != nil {
-		fmt.Errorf("error from settings value: %s", err1)
+		return nil, fmt.Errorf("error from settings value: %s", err1)
 	}
 
 	req, err := database.sql.Query("SELECT id FROM images WHERE filename = ?", filename)
@@ -68,7 +68,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 	for req.Next() {
 		err := req.Scan(&insertedImage.Id)
 		if err != nil {
-			fmt.Errorf("error from scan: %s", err)
+			return nil, fmt.Errorf("error from scan: %s", err)
 		}
 	}
 	if insertedImage.Id == -1 {
@@ -92,7 +92,7 @@ func (database *DB) CheckBase(filename string) (*Image, error) {
 	for rows.Next() {
 		err := rows.Scan(&response.Id)
 		if err != nil {
-			fmt.Errorf("error from scan: %s", err)
+			return nil, fmt.Errorf("error from scan: %s", err)
 		}
 	}
 	if response.Id == -1 {
@@ -101,11 +101,12 @@ func (database *DB) CheckBase(filename string) (*Image, error) {
 	return &response, nil
 }
 
-func (database *DB) Clean(id int32) {
+func (database *DB) Clean(id int32) error {
 	_, err := database.sql.Exec("DELETE FROM images WHERE id = ?", id)
 	if err != nil {
-		errors.New("can't delete row")
+		return errors.New("can't delete row")
 	}
+	return nil
 }
 
 func (database *DB) Close() {

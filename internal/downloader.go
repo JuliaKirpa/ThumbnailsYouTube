@@ -32,6 +32,9 @@ func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*pro
 		}
 
 		sdImage, err := s.DB.SaveToBase(filename, img)
+		if err != nil {
+			return nil, errors.New("error from saving to db")
+		}
 		return &proto.Image{
 			Status: sdImage.Status,
 			Id:     sdImage.Id,
