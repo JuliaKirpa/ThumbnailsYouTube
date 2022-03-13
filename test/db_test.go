@@ -48,12 +48,18 @@ func TestCheckBase(t *testing.T) {
 		log.Fatalf("err from preparing db %s", er)
 	}
 
-	filename := "lCbAt7bp0H4"
+	filenameExist := "lCbAt7bp0H4"
 
-	img, err := storage.CheckBase(filename)
+	img, err := storage.CheckBase(filenameExist)
 	require.NoError(t, err)
 	require.Equal(t, "already downloaded", img.Status)
 	require.NotZero(t, img.Id)
+
+	filenameNotExist := "lCbAt7bp0H6"
+
+	resp, err := storage.CheckBase(filenameNotExist)
+	require.Error(t, err)
+	require.Empty(t, resp)
 
 	defer func() {
 		storage.Close()
