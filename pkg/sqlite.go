@@ -38,7 +38,7 @@ func (database *DB) PrepareBase() error {
 
 	_, err1 := statement.Exec()
 	if err1 != nil {
-		fmt.Errorf("error from settings value: %s", err1)
+		return fmt.Errorf("error from settings value: %s", err1)
 	}
 	return nil
 }
