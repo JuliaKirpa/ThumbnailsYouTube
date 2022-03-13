@@ -3,14 +3,19 @@ package test
 import (
 	"ThumbnailsYouTube_/pkg"
 	"github.com/stretchr/testify/require"
+	"log"
 	"testing"
 )
 
 func TestSaveToBase(t *testing.T) {
 
-	storage, err := pkg.ConnectToBase()
+	storage := pkg.New()
+	defer storage.Close()
 
-	require.NoError(t, err)
+	er := storage.PrepareBase()
+	if er != nil {
+		log.Fatalf("err from preparing db %s", er)
+	}
 
 	filename := "lCbAt7bp0H4"
 	image := []byte{214, 46, 220, 83, 160, 73, 40, 39, 201, 155, 19, 202, 3, 11, 191, 178, 56,
@@ -32,4 +37,19 @@ func TestSaveToBase(t *testing.T) {
 		storage.Clean(img.Id)
 		storage.Close()
 	}()
+}
+
+func TestCheckBase(t *testing.T) {
+	//storage, err := pkg.ConnectToBase()
+	//require.NoError(t, err)
+	//
+	//filename := "lCbAt7bp0H4"
+	//
+	//img, err := storage.CheckBase(filename)
+	////require.EqualError(t, err, )
+	//require.Equal(t, "already downloaded", img.Status)
+	//
+	//defer func() {
+	//	storage.Close()
+	//}()
 }

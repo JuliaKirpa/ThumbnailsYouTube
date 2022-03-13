@@ -43,3 +43,16 @@ func (s *Server) Download(ctx context.Context, in *wrapperspb.StringValue) (*pro
 		Id:     image.Id,
 	}, nil
 }
+
+//func (s *Server) DownloadAsync(stream proto.Thumbnails_DownloadAsyncServer) error {
+//	for {
+//		url, err := stream.Recv()
+//		if err == io.EOF {
+//			return nil
+//		}
+//		if err != nil {
+//			return err
+//		}
+//
+//	}
+//}

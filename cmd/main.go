@@ -15,11 +15,13 @@ func main() {
 		panic(err)
 	}
 
-	db, err := pkg.ConnectToBase()
-	if err != nil {
-		log.Fatal("error to connecting DB")
-	}
+	db := pkg.New()
 	defer db.Close()
+
+	er := db.PrepareBase()
+	if er != nil {
+		log.Fatalf("err from preparing db %s", er)
+	}
 
 	server := internal.New(db)
 
