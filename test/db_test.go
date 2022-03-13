@@ -40,16 +40,22 @@ func TestSaveToBase(t *testing.T) {
 }
 
 func TestCheckBase(t *testing.T) {
-	//storage, err := pkg.ConnectToBase()
-	//require.NoError(t, err)
-	//
-	//filename := "lCbAt7bp0H4"
-	//
-	//img, err := storage.CheckBase(filename)
-	////require.EqualError(t, err, )
-	//require.Equal(t, "already downloaded", img.Status)
-	//
-	//defer func() {
-	//	storage.Close()
-	//}()
+	storage := pkg.New()
+	defer storage.Close()
+
+	er := storage.PrepareBase()
+	if er != nil {
+		log.Fatalf("err from preparing db %s", er)
+	}
+
+	filename := "lCbAt7bp0H4"
+
+	img, err := storage.CheckBase(filename)
+	require.NoError(t, err)
+	require.Equal(t, "already downloaded", img.Status)
+	require.NotZero(t, img.Id)
+
+	defer func() {
+		storage.Close()
+	}()
 }

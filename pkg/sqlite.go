@@ -51,6 +51,7 @@ func (database *DB) SaveToBase(filename string, image []byte) (*Image, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error from saving to db: %s", err)
 	}
+	defer req.Close()
 
 	insertedImage := Image{
 		Status: "downloaded",
