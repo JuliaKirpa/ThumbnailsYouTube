@@ -12,7 +12,7 @@ import (
 func main() {
 	lis, err := net.Listen("tcp", "localhost:50051")
 	if err != nil {
-		panic(err)
+		log.Fatalf("error from lister gRPC server: %s", err)
 	}
 
 	db := pkg.New()
@@ -29,7 +29,8 @@ func main() {
 	proto.RegisterThumbnailsServer(GRPCServ, server)
 
 	if err := GRPCServ.Serve(lis); err != nil {
-		panic(err)
+		log.Fatalf("error from serv gRPC server: %s", err)
 	}
 
+	defer GRPCServ.GracefulStop()
 }
